@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PoreBlazerRun"
+version = "0.1.0"
+description = "Parses the output files of a PoreBlazer run "
+keywords = ["python", "PoreBlazer"]
+authors = [ { name="Tim" } ]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "polars >= 1.37.0",
+]
+
+[project.urls]
+repository = "https://github.com/TimKruikemeijerTUe/PoreBlazer-output-parser"
+
+[tool.setuptools.packages.find]
+where = ["src"]
