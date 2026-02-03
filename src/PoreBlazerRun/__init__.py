@@ -24,6 +24,7 @@ class PoreBlazerRun:
         """
         # Attributes
         self.psd = pl.DataFrame()
+        self.occup_vol = pl.DataFrame()
         self.summary = {}
         self.input_file_name = ""
 
@@ -38,12 +39,14 @@ class PoreBlazerRun:
 
         self.__parse_psds()
         self.__parse_summary()
+        self.__parse_occup_vol()
 
     def clean(self) -> None:
         """Clean the output files. Does not do all files yet."""
         self.__clean_psds(self.existing_paths["psd_cum"])
         self.__clean_psds(self.existing_paths["psd"])
         self.__clean_summary()
+        self.__clean_occup_vol()
         # TODO Others
 
     def __clean_psds(self, path: Path) -> None:
@@ -64,6 +67,9 @@ class PoreBlazerRun:
 
     def __clean_summary(self) -> None:
         """Make the summary file csv."""
+        if "summary" not in self.existing_paths:
+            return
+
         with self.existing_paths["summary"].open(mode="r") as f:
             text = f.read()
 
@@ -92,6 +98,19 @@ class PoreBlazerRun:
 
         with self.existing_paths["summary"].open(mode="w") as f:
             f.write(to_write)
+
+    def __clean_occup_vol(self) -> None:
+        if "occup_vol" not in self.existing_paths:
+            return
+
+        with self.existing_paths["occup_vol"].open(mode="r") as f:
+            text = f.read()
+
+        text = re.sub(r"( +)", r" ", text)  # Remove multiple space
+        text = "\n".join([line.strip() for line in text.splitlines()])
+
+        with self.existing_paths["occup_vol"].open(mode="w") as f:
+            f.write(text)
 
     def __parse_psds(self) -> None:
         tab_psd_c: DataFrame = pl.read_csv(
@@ -139,6 +158,18 @@ class PoreBlazerRun:
             "total_output": total_params,
             "network_accessible_output": network_params,
         }
+
+    def __parse_occup_vol(self) -> None:
+        if "occup_vol" not in self.existing_paths:
+            return
+
+        self.occup_vol = pl.read_csv(
+            self.existing_paths["occup_vol"],
+            separator=" ",
+            has_header=False,
+            skip_lines=2,
+            new_columns=["Particle", "x", "y", "z"],
+        )
 
     def __get_paths(self) -> dict[str, Path]:
         possible_paths: dict[str, str] = {
