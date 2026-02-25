@@ -37,9 +37,13 @@ class PoreBlazerRun:
         if clean:
             self.clean()
 
-        self.__parse_psds()
-        self.__parse_summary()
-        self.__parse_occup_vol()
+        # Parsing
+        if ("psd" in self.existing_paths) and ("psd_cum" in self.existing_paths):
+            self.__parse_psds()
+        if "summary" in self.existing_paths:
+            self.__parse_summary()
+        if "occup_vol" in self.existing_paths:
+            self.__parse_occup_vol()
 
     def clean(self) -> None:
         """Clean the output files. Does not do all files yet."""
@@ -162,9 +166,6 @@ class PoreBlazerRun:
         }
 
     def __parse_occup_vol(self) -> None:
-        if "occup_vol" not in self.existing_paths:
-            return
-
         self.occup_vol = pl.read_csv(
             self.existing_paths["occup_vol"],
             separator=" ",
