@@ -43,8 +43,10 @@ class PoreBlazerRun:
 
     def clean(self) -> None:
         """Clean the output files. Does not do all files yet."""
-        self.__clean_psds(self.existing_paths["psd_cum"])
-        self.__clean_psds(self.existing_paths["psd"])
+        if "psd_cum" in self.existing_paths:
+            self.__clean_psds(self.existing_paths["psd_cum"])
+        if "psd" in self.existing_paths:
+            self.__clean_psds(self.existing_paths["psd"])
         self.__clean_summary()
         self.__clean_occup_vol()
         # TODO Others
